@@ -7,6 +7,10 @@ const Title = (props) => (
 )
 
 const Statistics = (props) => {
+  const total = props.good + props.neutral + props.bad;
+  const average = (props.good - props.bad) / total;
+  const positive = (props.good / total) * 100;
+
   return(
     <div>
       <table>
@@ -22,6 +26,18 @@ const Statistics = (props) => {
           <tr>
             <td>bad</td>
             <td>{props.bad}</td>
+          </tr>
+          <tr>
+            <td>all</td>
+            <td>{total}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{average}</td>
+          </tr>
+          <tr>
+            <td>positive</td>
+            <td>{positive}</td>
           </tr>
         </tbody>
       </table>
