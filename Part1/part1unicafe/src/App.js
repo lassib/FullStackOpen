@@ -20,8 +20,8 @@ const Statistics = (props) => {
             <StatisticLine text="neutral" value={props.neutral} />
             <StatisticLine text="bad" value={props.bad} />
             <StatisticLine text="all" value={total} />
-            <StatisticLine text="average" value={average} />
-            <StatisticLine text="positive" value={positive} />
+            <StatisticLine text="average" value={average.toFixed(2)} />
+            <StatisticLine text="positive" value={positive.toFixed(2) + " %"} />
           </tbody>
         </table>
       </div>
@@ -34,7 +34,7 @@ const StatisticLine = (props) => {
   return (
     <tr>
       <td>{props.text}</td>
-      <td>{props.value}</td>
+      <td>{(props.value)}</td>
     </tr>
   );
 };
