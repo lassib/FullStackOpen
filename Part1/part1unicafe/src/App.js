@@ -45,7 +45,7 @@ const Button = (props) => (
 
 const App = () => {
   const feedback = "give feedback";
-  const statistics = "statisctics";
+  const statistics = "statistics";
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
