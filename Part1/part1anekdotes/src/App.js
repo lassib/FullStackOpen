@@ -13,11 +13,16 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
   const [votesArray, setVoteCount] = useState(new Uint8Array(7));
+  const [mostVoted, setMostVoted] = useState(0);
 
   const setVotes = () => {
     const copy = { ...votesArray };
     copy[selected] += 1;
     setVoteCount(copy);
+
+    if (copy[selected] > votesArray[mostVoted]) {
+      setMostVoted(selected);
+    }
   };
 
   function getRandomInt(max) {
@@ -29,17 +34,19 @@ const App = () => {
     while (nextIndex === selected) {
       nextIndex = getRandomInt(anecdotes.length);
     }
-    console.log(nextIndex);
     setSelected(nextIndex);
   };
 
   return (
     <div>
-      {anecdotes[selected]}
-      <br></br>
+      <h1>Anecdote of the day</h1>
+      <p>{anecdotes[selected]}</p>
       <p>has {votesArray[selected]} votes</p>
       <button onClick={handleNext}>Next anecdote</button>
       <button onClick={setVotes}>Vote</button>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[mostVoted]}</p>
+      <p>has {votesArray[mostVoted]} votes</p>
     </div>
   );
 };
