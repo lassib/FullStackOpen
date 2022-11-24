@@ -5,8 +5,7 @@ const Country = (props) => {
   return (
     <div>
       <h1>{props.country.name.common}</h1>
-      <p>capital: {props.country.capital}</p>
-      <p>area: {props.country.area}</p>
+      <p>Capital: {props.country.capital}<br/>Area: {props.country.area}</p>
       <h4>Languages:</h4>
       <ul>
         {Object.values(props.country.languages).map((language) => (
@@ -19,6 +18,7 @@ const Country = (props) => {
         height={150}
         alt="Flag was not found"
       ></img>
+      <Weather countryName={props.country.name.common} lat={props.country.latlng[0]} long={props.country.latlng[1]} />
     </div>
   );
 };
@@ -60,6 +60,37 @@ const CountryFilter = (props) => {
   }
 };
 
+const Weather = (props) => {
+  const [weatherData, setWeatherData] = useState();
+  const API_KEY = process.env.REACT_APP_API_KEY;
+  const apiURL = `https://api.openweathermap.org/data/2.5/weather?lat=${props.lat}&lon=${props.long}&appid=${API_KEY}`;
+
+  useEffect(() => {
+    axios.get(apiURL).then((response) => {
+      setWeatherData(response.data);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  if (weatherData === undefined){
+    return <p>Loading weather data...</p>
+  }
+  else {
+    const icon = `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`;
+    const temp =(weatherData.main.temp-273.15).toFixed(2);
+    const windSpeed = weatherData.wind.speed;
+    return(
+      <form>
+        <h2>Weather in {props.countryName}</h2>
+        <p>Temperature: {temp} C&deg;</p>
+        <img src={icon} alt="Loading..." />
+        <br/>
+        <p>Wind: {windSpeed} m/s</p>
+      </form>
+    )
+  }
+};
+
 function App() {
   const [countries, setCountries] = useState([]);
   const [filterCountry, setFilterCountry] = useState("");
@@ -79,7 +110,7 @@ function App() {
     <div>
       <form>
         <div>
-          find countries <input onChange={handleCountryChange} />
+          Find countries <input onChange={handleCountryChange} />
         </div>
       </form>
       <CountryFilter
