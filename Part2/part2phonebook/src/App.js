@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import personsServices from "./services/personsServices"
+import personsServices from "./services/personsServices";
 
 const Filter = (props) => {
   const handleFilterChange = (event) => {
@@ -24,11 +24,10 @@ const PersonForm = (props) => {
   const handleNewPerson = (event) => {
     event.preventDefault();
     const nameArray = props.persons.map((obj) => obj.name);
-    const id = Object.keys(props.persons).length + 1;
     const addPerson = {
       name: props.newName,
       number: props.newNumber,
-      id: id,
+      id: Math.floor(Math.random() * 10000),
     };
 
     if (nameArray.includes(`${props.newName}`)) {
@@ -70,9 +69,10 @@ const Persons = (props) => {
 
   return (
     <ul>
-      {shownPersons.map((person, i) => (
-        <li key={i}>
+      {shownPersons.map((person) => (
+        <li key={person.id}>
           {person.name} {person.number}
+          <button onClick={props.handleDeletePerson(person.name, person.id)}>Delete</button>
         </li>
       ))}
     </ul>
@@ -88,9 +88,18 @@ const App = () => {
 
   useEffect(() => {
     personsServices.getAllPersons().then((persons) => {
-      setPersons(persons)
-    })
+      setPersons(persons);
+    });
   }, []);
+
+  const handleDeletePerson = (name, id) => {
+    return() => {if (window.confirm(`Delete: ${name}?`)){
+      personsServices.deletePerson(id);
+      const fileteredPersons = persons.filter((persons) => persons.id !== id);
+      setPersons(fileteredPersons);
+    }}
+  };
+
 
   return (
     <div>
@@ -115,6 +124,7 @@ const App = () => {
           persons={persons}
           filterPersons={filterPersons}
           filter={filter}
+          handleDeletePerson={handleDeletePerson}
         />
       </div>
     </div>

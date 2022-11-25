@@ -7,12 +7,17 @@ const getAllPersons = () => {
 };
 
 const createPerson = (newPerson) => {
-    axios.post(`http://localhost:3001/persons`, newPerson);
-  };
+  axios.post(`http://localhost:3001/persons`, newPerson);
+};
+
+const deletePerson = (id) => {
+  axios.delete(`${url}/${id}`);
+};
 
 const personServices = {
   getAllPersons,
   createPerson,
+  deletePerson,
 };
 
 export default personServices;
