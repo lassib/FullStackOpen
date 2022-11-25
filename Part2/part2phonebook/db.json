@@ -1,59 +1,19 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": 2
-    },
-    {
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
     },
     {
       "name": "Mari Huana",
-      "number": "0443443233",
-      "id": 5
+      "number": "0446557890",
+      "id": 6028
     },
     {
-      "name": "Mari Hana",
-      "number": "0442553333",
-      "id": 6
-    },
-    {
-      "name": "Kimmo Kala",
-      "number": "0442337673",
-      "id": 7
-    },
-    {
-      "name": "Kola Olli",
+      "name": "Kai Laine",
       "number": "0445567788",
-      "id": 8
-    },
-    {
-      "name": "Ada Laine",
-      "number": "0443225678",
-      "id": 9
-    },
-    {
-      "name": "Kimmo Laine",
-      "number": "0442553333",
-      "id": 10
-    },
-    {
-      "name": "Timo Soini",
-      "number": "0447668899",
-      "id": 11
-    },
-    {
-      "name": "Kari Kummola",
-      "number": "0506557654",
-      "id": 12
-    },
-    {
-      "name": "Kai Kummola",
-      "number": "0506557890",
-      "id": 13
+      "id": 2217
     }
   ]
 }

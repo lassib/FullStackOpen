@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import personsServices from "./services/personsServices";
 
+const Notification = (props) => {
+  if (props.message === null) {
+    return null;
+  }
+  return <div className={props.style}>{props.message}</div>;
+};
+
 const Filter = (props) => {
   const handleFilterChange = (event) => {
     props.setFilter(event.target.value);
@@ -34,7 +41,19 @@ const PersonForm = (props) => {
       handleUpdatePerson(addPerson);
     } else {
       props.setPersons(props.persons.concat(addPerson));
-      personsServices.createPerson(addPerson);
+      personsServices
+        .createPerson(addPerson)
+        .then(() => {
+          props.setCssStyle("added");
+          props.setErrorMessage(`Added: ${props.newName}`);
+          props.clearErrorMsg();
+        })
+        .catch((error) => {
+          props.setCssStyle("error");
+          props.setErrorMessage(`${error.response.data.error}`);
+          console.log(error.response.data);
+          props.clearErrorMsg();;
+        });
     }
   };
 
@@ -55,13 +74,23 @@ const PersonForm = (props) => {
       const findPerson = props.persons.find(
         (person) => person.name === personObj.name
       );
-      personsServices.updatePerson(findPerson.id, personObj);
+      personsServices.updatePerson(findPerson.id, personObj)
+      .then(() => {
+        props.setNewName("");
+        props.setNewNumber("");
+        props.setCssStyle("added");
+        props.setErrorMessage(`Changed ${personObj.name}'s number`);
+        props.clearErrorMsg();
+      })
+      .catch((error) => {
+        props.setCssStyle("error");
+        props.setErrorMessage("Updating failed.");
+        props.clearErrorMsg();
+      });
       const fileteredPersons = props.persons.map((personName) =>
         personName.name === personObj.name ? personObj : personName
       );
       props.setPersons(fileteredPersons);
-      props.setNewName("");
-      props.setNewNumber("");
     }
   };
 
@@ -106,11 +135,19 @@ const App = () => {
   const [filter, setFilter] = useState("");
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [cssStyle, setCssStyle] = useState("");
 
   const updateAllPersons = () => {
     personsServices.getAllPersons().then((persons) => {
       setPersons(persons);
     });
+  };
+
+  const clearErrorMsg = () => {
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -120,15 +157,31 @@ const App = () => {
   const handleDeletePerson = (name, id) => {
     return () => {
       if (window.confirm(`Delete: ${name}?`)) {
-        personsServices.deletePerson(id);
-        const fileteredPersons = persons.filter((persons) => persons.id !== id);
-        setPersons(fileteredPersons);
+        personsServices
+          .deletePerson(id)
+          .then(() => {
+            const fileteredPersons = persons.filter(
+              (persons) => persons.id !== id
+            );
+            setPersons(fileteredPersons);
+            setCssStyle("error");
+            setErrorMessage(`Deleted: ${name}.`);
+            clearErrorMsg();
+          })
+          .catch((error) => {
+            setCssStyle("error");
+            setErrorMessage(
+              `Information of ${name} has already been removed from server`
+            );
+            clearErrorMsg();
+          });
       }
     };
   };
 
   return (
     <div>
+      <Notification message={errorMessage} style={cssStyle} />
       <h2>Phonebook</h2>
       <Filter
         persons={persons}
@@ -143,6 +196,9 @@ const App = () => {
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
+        setErrorMessage={setErrorMessage}
+        setCssStyle={setCssStyle}
+        clearErrorMsg={clearErrorMsg}
       />
       <div>
         <h3>Numbers</h3>
