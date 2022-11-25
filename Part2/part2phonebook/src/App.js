@@ -31,7 +31,7 @@ const PersonForm = (props) => {
     };
 
     if (nameArray.includes(`${props.newName}`)) {
-      alert(`${props.newName} is already added to phonebook`);
+      handleUpdatePerson(addPerson);
     } else {
       props.setPersons(props.persons.concat(addPerson));
       personsServices.createPerson(addPerson);
@@ -46,12 +46,31 @@ const PersonForm = (props) => {
     props.setNewNumber(event.target.value);
   };
 
+  const handleUpdatePerson = (personObj) => {
+    if (
+      window.confirm(
+        `${personObj.name} is already added to the phonebook, replace the old number with a new one?`
+      )
+    ) {
+      const findPerson = props.persons.find(
+        (person) => person.name === personObj.name
+      );
+      personsServices.updatePerson(findPerson.id, personObj);
+      const fileteredPersons = props.persons.map((personName) =>
+        personName.name === personObj.name ? personObj : personName
+      );
+      props.setPersons(fileteredPersons);
+      props.setNewName("");
+      props.setNewNumber("");
+    }
+  };
+
   return (
     <form>
       <div>
-        name: <input onChange={handleNameChange} />
+        name: <input value={props.newName} onChange={handleNameChange} />
         <br></br>
-        number: <input onChange={handleNumberChange} />
+        number: <input value={props.newNumber} onChange={handleNumberChange} />
         <br></br>
         <button type="submit" onClick={handleNewPerson}>
           add
@@ -72,7 +91,9 @@ const Persons = (props) => {
       {shownPersons.map((person) => (
         <li key={person.id}>
           {person.name} {person.number}
-          <button onClick={props.handleDeletePerson(person.name, person.id)}>Delete</button>
+          <button onClick={props.handleDeletePerson(person.name, person.id)}>
+            Delete
+          </button>
         </li>
       ))}
     </ul>
@@ -86,20 +107,25 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
-  useEffect(() => {
+  const updateAllPersons = () => {
     personsServices.getAllPersons().then((persons) => {
       setPersons(persons);
     });
+  };
+
+  useEffect(() => {
+    updateAllPersons();
   }, []);
 
   const handleDeletePerson = (name, id) => {
-    return() => {if (window.confirm(`Delete: ${name}?`)){
-      personsServices.deletePerson(id);
-      const fileteredPersons = persons.filter((persons) => persons.id !== id);
-      setPersons(fileteredPersons);
-    }}
+    return () => {
+      if (window.confirm(`Delete: ${name}?`)) {
+        personsServices.deletePerson(id);
+        const fileteredPersons = persons.filter((persons) => persons.id !== id);
+        setPersons(fileteredPersons);
+      }
+    };
   };
-
 
   return (
     <div>
