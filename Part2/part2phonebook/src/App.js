@@ -24,17 +24,18 @@ const PersonForm = (props) => {
   const handleNewPerson = (event) => {
     event.preventDefault();
     const nameArray = props.persons.map((obj) => obj.name);
-    const addPerson = [
-      {
-        name: props.newName,
-        number: props.newNumber,
-      },
-    ];
+    const id = Object.keys(props.persons).length + 1;
+    const addPerson = {
+      name: props.newName,
+      number: props.newNumber,
+      id: id,
+    };
 
     if (nameArray.includes(`${props.newName}`)) {
       alert(`${props.newName} is already added to phonebook`);
     } else {
       props.setPersons(props.persons.concat(addPerson));
+      createPerson(addPerson);
     }
   };
 
@@ -76,6 +77,10 @@ const Persons = (props) => {
       ))}
     </ul>
   );
+};
+
+const createPerson = (newPerson) => {
+  axios.post(`http://localhost:3001/persons`, newPerson);
 };
 
 const App = () => {
