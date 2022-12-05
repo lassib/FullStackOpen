@@ -44,6 +44,8 @@ const PersonForm = (props) => {
       personsServices
         .createPerson(addPerson)
         .then(() => {
+          props.setNewName("");
+          props.setNewNumber("");
           props.setCssStyle("added");
           props.setErrorMessage(`Added: ${props.newName}`);
           props.clearErrorMsg();
@@ -52,7 +54,7 @@ const PersonForm = (props) => {
           props.setCssStyle("error");
           props.setErrorMessage(`${error.response.data.error}`);
           console.log(error.response.data);
-          props.clearErrorMsg();;
+          props.clearErrorMsg();
         });
     }
   };
@@ -74,19 +76,21 @@ const PersonForm = (props) => {
       const findPerson = props.persons.find(
         (person) => person.name === personObj.name
       );
-      personsServices.updatePerson(findPerson.id, personObj)
-      .then(() => {
-        props.setNewName("");
-        props.setNewNumber("");
-        props.setCssStyle("added");
-        props.setErrorMessage(`Changed ${personObj.name}'s number`);
-        props.clearErrorMsg();
-      })
-      .catch((error) => {
-        props.setCssStyle("error");
-        props.setErrorMessage("Updating failed.");
-        props.clearErrorMsg();
-      });
+      personsServices
+        .updatePerson(findPerson.id, personObj)
+        .then(() => {
+          props.setNewName("");
+          props.setNewNumber("");
+          props.setCssStyle("added");
+          props.setErrorMessage(`Changed ${personObj.name}'s number`);
+          props.clearErrorMsg();
+        })
+        .catch((error) => {
+          console.log(error);
+          props.setCssStyle("error");
+          props.setErrorMessage("Updating failed.");
+          props.clearErrorMsg();
+        });
       const fileteredPersons = props.persons.map((personName) =>
         personName.name === personObj.name ? personObj : personName
       );
